@@ -1,3 +1,10 @@
+/*
+ *  hydro_sens.h
+ *
+ *  hydro sens header
+ *
+ */
+ 
 #pragma once
 
 #ifndef HYDRO_SENS_H
@@ -9,10 +16,7 @@
 #include "NewPing.h"
 
 #define PH_CAL 21.34 + 2.3 - 2.39
-
-#define TDS_TEMPERATURE 25.0
 #define SCOUNT 30
-#define VREF 3.3
 
 typedef enum {
         ULTRA_SENS_UP = 0,
@@ -21,6 +25,7 @@ typedef enum {
         ULTRA_SENS_RIGHT = 3,
         ULTRA_SENS_NUM = 4,
 
+        // pins cfg
         ULTRA_PINS_TRIGG = 0,
         ULTRA_PINS_ECHO = 1,
         ULTRA_PINS_NUM = 2
@@ -47,7 +52,7 @@ typedef struct {
 } ph_sens_t;
 
 typedef struct {
-        int copyIndex;
+        // int copyIndex;
         int analogBufferIndex;
         int analogBuffer[SCOUNT];
         int analogBufferTemp[SCOUNT];

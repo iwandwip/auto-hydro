@@ -1,11 +1,25 @@
-#include "HardwareSerial.h"
+/*
+ *  hydro_sens.cpp
+ *
+ *  hydro sens c
+ *
+ */
+
 #include <stdint.h>
 #include "hydro_sens.h"
 #include "hydro_def.h"
 #include "Arduino.h"
+#include "HardwareSerial.h"
 
-#define MAX_ULT_DISTANCE 200
+#define ULT_MAX_DISTANCE 200
 #define ULT_FILTER_KF 8
+
+#define TDS_SENS_BIT 1024.0
+#define TDS_TEMPERATURE 25.0
+#define TDS_VREF 5
+
+// internal function
+int getMedianNum(int bArray[], int iFilterLen);
 
 void hydro_sens_init(sens_t *packet) {
         packet->ult.sensorTriggPin[ULTRA_SENS_UP] = TRIGG_ULT_PIN_UP;
@@ -19,7 +33,7 @@ void hydro_sens_init(sens_t *packet) {
         packet->ult.sensorEchoPin[ULTRA_SENS_RIGHT] = ECHO_ULT_PIN_RIGHT;
 
         for (uint8_t i = 0; i < ULTRA_SENS_NUM; i++) {
-                packet->ult.sensorSonar[i] = new NewPing(packet->ult.sensorEchoPin[i], packet->ult.sensorTriggPin[i], MAX_ULT_DISTANCE);
+                packet->ult.sensorSonar[i] = new NewPing(packet->ult.sensorEchoPin[i], packet->ult.sensorTriggPin[i], ULT_MAX_DISTANCE);
                 packet->ult.sensorOffset[i] = 0;
         }
 
@@ -40,8 +54,24 @@ void hydro_sens_loop(sens_t *packet) {
         if (millis() - sens_tmr[PH_TMR] >= 300) {
                 sens_tmr[PH_TMR] = millis();
         }
-        if (millis() - sens_tmr[TDS_TMR] >= 300) {
+        if (millis() - sens_tmr[TDS_TMR] >= 40U) {
+                packet->tds.analogBuffer[packet->tds.analogBufferIndex] = analogRead(TDS_PIN);
+                packet->tds.analogBufferIndex++;
+                if (packet->tds.analogBufferIndex == SCOUNT) packet->tds.analogBufferIndex = 0;
                 sens_tmr[TDS_TMR] = millis();
+        }
+        static uint32_t tdsTmr;  // tdsAvg
+        if (millis() - tdsTmr >= 800U) {
+                for (uint8_t i = 0; i < SCOUNT; i++) {
+                        packet->tds.analogBufferTemp[i] = packet->tds.analogBuffer[i];
+                        packet->tds.averageVoltage = getMedianNum(packet->tds.analogBufferTemp, SCOUNT) * (float)TDS_VREF / TDS_SENS_BIT;
+
+                        float cmpCoef = 1.0 + 0.02 * (TDS_TEMPERATURE - 25.0);
+                        float cmpVolt = packet->tds.averageVoltage / cmpCoef;
+
+                        packet->tds.tdsValue = (133.42 * cmpVolt * cmpVolt * cmpVolt - 255.86 * cmpVolt * cmpVolt + 857.39 * cmpVolt) * 0.5;
+                }
+                tdsTmr = millis();
         }
 }
 void hydro_sens_debug(sens_t *packet) {
@@ -52,9 +82,10 @@ void hydro_sens_debug(sens_t *packet) {
                         Serial.print("ult");
                         Serial.print(i + 1);
                         Serial.print(": ");
-                        Serial.print(packet->ult.rawSensorData[i]);
+                        Serial.print(packet->ult.sensorData[i]);
                         Serial.print("][");
                 }
+                Serial.print(packet->tds.tdsValue);
                 Serial.print("]");
                 Serial.println();
                 dbg_tmr = millis();
@@ -66,4 +97,26 @@ int16_t getUltrasonicVal(ultrasonic_index_t c) {
 float getPhValue(sens_t *packet) {
 }
 float getTdsValue(sens_t *packet) {
+}
+
+int getMedianNum(int bArray[], int iFilterLen) {
+        int bTab[iFilterLen];
+        for (byte i = 0; i < iFilterLen; i++)
+                bTab[i] = bArray[i];
+        int i, j, bTemp;
+        for (j = 0; j < iFilterLen - 1; j++) {
+                for (i = 0; i < iFilterLen - j - 1; i++) {
+                        if (bTab[i] > bTab[i + 1]) {
+                                bTemp = bTab[i];
+                                bTab[i] = bTab[i + 1];
+                                bTab[i + 1] = bTemp;
+                        }
+                }
+        }
+        if ((iFilterLen & 1) > 0) {
+                bTemp = bTab[(iFilterLen - 1) / 2];
+        } else {
+                bTemp = (bTab[iFilterLen / 2] + bTab[iFilterLen / 2 - 1]) / 2;
+        }
+        return bTemp;
 }

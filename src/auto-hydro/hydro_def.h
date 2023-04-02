@@ -1,11 +1,11 @@
-#pragma once
-
 /*
  *  hydro_def.h
  *
  *  Hydro define
  *
  */
+
+#pragma once
 
 #ifndef HYDRO_DEF_H
 #define HYDRO_DEF_H
