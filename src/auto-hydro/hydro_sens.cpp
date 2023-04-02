@@ -85,18 +85,25 @@ void hydro_sens_debug(sens_t *packet) {
                         Serial.print(packet->ult.sensorData[i]);
                         Serial.print("][");
                 }
+                Serial.print("tds: ");
                 Serial.print(packet->tds.tdsValue);
+                Serial.print("][");
+                Serial.print("tdsA: ");
+                Serial.print(analogRead(TDS_PIN));
                 Serial.print("]");
                 Serial.println();
                 dbg_tmr = millis();
         }
 }
 
-int16_t getUltrasonicVal(ultrasonic_index_t c) {
+int16_t getUltrasonicVal(sens_t *packet, ultrasonic_index_t c) {
+        return packet->ult.sensorData[c];
 }
 float getPhValue(sens_t *packet) {
+        return packet->ph.phAct;
 }
 float getTdsValue(sens_t *packet) {
+        return packet->tds.tdsValue;
 }
 
 int getMedianNum(int bArray[], int iFilterLen) {
