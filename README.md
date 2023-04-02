@@ -1,2 +1,2 @@
 # auto-hydro
-Hydroponics Systems based on ESP32 &amp; Arduino UNO with IOT
+IoT-Based Hydroponic Systems with Arduino Nano & ESP32
