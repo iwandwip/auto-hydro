@@ -1,8 +1,8 @@
 /*
  *  hydro_sens.h
  *
- *  hydro sens header
- *
+ *  hydro sensor header
+ *  Created on: 2023. 4. 3
  */
 
 #pragma once
@@ -15,8 +15,8 @@
 
 #include "NewPing.h"
 
-#define PH_CAL 21.34 + 2.3 - 2.39
 #define SCOUNT 30
+#define PHSCOUNT 10
 
 typedef enum {
         ULTRA_SENS_UP = 0,
@@ -48,7 +48,8 @@ typedef struct {
         float phVolt;
         uint32_t average;
         int temporary;
-        int buffer[10];
+        int buffer[PHSCOUNT];
+        int bufferTemp[PHSCOUNT];
 } ph_sens_t;
 
 typedef struct {

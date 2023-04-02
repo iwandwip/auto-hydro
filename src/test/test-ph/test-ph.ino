@@ -30,10 +30,10 @@ void loop() {
         float ph_act = -5.70 * volt + calibration_value;
 
         Serial.print("pH Val  :");
-        Serial.println(ph_act);
-        Serial.print("pH volt :");
-        Serial.println(volt);
-        Serial.print("Analog  :");
+        Serial.print(ph_act);
+        Serial.print(" | pH volt :");
+        Serial.print(volt);
+        Serial.print("| Analog  :");
         Serial.println(analogRead(A0));
 }
 

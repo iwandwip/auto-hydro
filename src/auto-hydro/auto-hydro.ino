@@ -1,13 +1,12 @@
-#include "hydro_sens.h"
+#include "hydro_node.h"
 
-sens_t sensors;
+node_t node;
 
 void setup() {
         Serial.begin(9600);
-        hydro_sens_init(&sensors);
+        hydro_node_init(&node);
 }
 
 void loop() {
-        hydro_sens_loop(&sensors);
-        hydro_sens_debug(&sensors);
+        hydro_node_loop(&node);
 }

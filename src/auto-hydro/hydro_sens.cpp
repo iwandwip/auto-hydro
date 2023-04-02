@@ -1,8 +1,8 @@
 /*
  *  hydro_sens.cpp
  *
- *  hydro sens c
- *
+ *  hydro sensor c
+ *  Created on: 2023. 4. 3
  */
 
 #include <stdint.h>
@@ -17,6 +17,11 @@
 #define TDS_SENS_BIT 1024.0
 #define TDS_TEMPERATURE 25.0
 #define TDS_VREF 5
+
+#define PH_SENS_BIT 1024.0
+#define PH_TEMPERATURE 27.0
+#define PH_VREF 5
+#define PH_CAL 21.34 + 4.0
 
 // internal function
 int getMedianNum(int bArray[], int iFilterLen);
@@ -51,7 +56,18 @@ void hydro_sens_loop(sens_t *packet) {
                 }
                 sens_tmr[ULT_TMR] = millis();
         }
+        for (uint8_t i = 0; i < PHSCOUNT; i++) {
+                unsigned long t = 30;
+                for (static unsigned long e_time; millis() - e_time >= (t); e_time += (t)) {
+                        packet->ph.buffer[i] = analogRead(PH_PIN);
+                }
+        }
         if (millis() - sens_tmr[PH_TMR] >= 300) {
+                for (uint8_t i = 0; i < PHSCOUNT; i++) {
+                        packet->ph.bufferTemp[i] = packet->ph.buffer[i];
+                        packet->ph.phVolt = getMedianNum(packet->ph.bufferTemp, PHSCOUNT) * PH_VREF / PH_SENS_BIT / 6;
+                        packet->ph.phAct = -5.70 * packet->ph.phVolt + PH_CAL;
+                }
                 sens_tmr[PH_TMR] = millis();
         }
         if (millis() - sens_tmr[TDS_TMR] >= 40U) {
@@ -90,6 +106,12 @@ void hydro_sens_debug(sens_t *packet) {
                 Serial.print("][");
                 Serial.print("tdsA: ");
                 Serial.print(analogRead(TDS_PIN));
+                Serial.print("][");
+                Serial.print("ph: ");
+                Serial.print(packet->ph.phAct);
+                Serial.print("][");
+                Serial.print("phA: ");
+                Serial.print(analogRead(PH_PIN));
                 Serial.print("]");
                 Serial.println();
                 dbg_tmr = millis();
