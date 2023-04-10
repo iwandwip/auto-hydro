@@ -10,7 +10,7 @@
 #include "hydro_def.h"
 #include "SoftwareSerial.h"
 
-#define SEND_TO_ESP0
+#define SEND_TO_ESP
 #define SEND_INTERVAL 1000
 
 SoftwareSerial espSerial(ESP_TX_SER, ESP_RX_SER);

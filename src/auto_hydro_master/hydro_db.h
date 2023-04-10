@@ -20,6 +20,7 @@
 // } db_data;
 
 typedef bool status;
+typedef String address;
 
 typedef struct {
       private:
