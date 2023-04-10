@@ -1,7 +1,7 @@
 /*
  *  hydro_hw_m.h
  *
- *  hydro hardware master
+ *  hydro hardware master header
  *  Created on: 2023. 4. 3
  */
 

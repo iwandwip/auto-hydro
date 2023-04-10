@@ -1,7 +1,7 @@
 /*
  *  hydro_hw.cpp
  *
- *  hydro hardware c
+ *  hydro hardware master c
  *  Created on: 2023. 4. 3
  */
 

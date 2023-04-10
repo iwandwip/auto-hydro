@@ -10,18 +10,22 @@
 #include "hydro_def.h"
 #include "SoftwareSerial.h"
 
+#define SEND_TO_ESP0
 #define SEND_INTERVAL 1000
 
 SoftwareSerial espSerial(ESP_TX_SER, ESP_RX_SER);
 
 void hydro_hw_init(void) {
+#ifdef SEND_TO_ESP
         espSerial.begin(115200);
         espSerial.println();
+#endif
 }
 
 void hydro_hw_loop(sens_t* packet_sens, node_t* packet_node) {
         static uint32_t snd_tmr;
         if (millis() - snd_tmr >= SEND_INTERVAL) {
+#ifdef SEND_TO_ESP
                 // espSerial.print(":");
                 espSerial.print(packet_sens->ult.sensorData[ULTRA_SENS_UP]);
                 espSerial.print(",");
@@ -43,6 +47,7 @@ void hydro_hw_loop(sens_t* packet_sens, node_t* packet_node) {
                 espSerial.print(",");
                 espSerial.print(packet_node->relay.relayState[RELAY_RIGHT]);
                 espSerial.println();
+#endif
                 snd_tmr = millis();
         }
 }
