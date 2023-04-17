@@ -1,4 +1,3 @@
-#include "esp32-hal.h"
 /*
  *  hydro_db_m.h
  *
@@ -8,6 +7,7 @@
 
 #include "hydro_db.h"
 #include "WiFi.h"
+#include "esp32-hal.h"
 
 #include "Firebase_ESP_Client.h"
 #include "addons/TokenHelper.h"
