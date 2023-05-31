@@ -29,6 +29,11 @@ void SerialCom::addData(float newData, const char* separator) {
         dataSend += separator;
 }
 
+void SerialCom::addData(int newData, const char* separator) {
+        dataSend += String(newData);
+        dataSend += separator;
+}
+
 void SerialCom::clearData() {
         dataSend = "";
 }
