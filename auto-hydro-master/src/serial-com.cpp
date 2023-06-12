@@ -9,14 +9,14 @@
 
 // #include "SoftwareSerial.h"
 
-#define USING_SERIAL Serial
+#define COM_SERIAL Serial2
 
-// SoftwareSerial USING_SERIAL(2, 3);
+// SoftwareSerial COM_SERIAL(2, 3);
 
 SerialCom::SerialCom() {
         dataSend = "";
-        // USING_SERIAL.begin(9600);
-        USING_SERIAL.println();
+        COM_SERIAL.begin(115200, SERIAL_8N1, 16, 17);
+        COM_SERIAL.println();
 }
 
 void SerialCom::addData(const char* newData, const char* separator) {
@@ -41,19 +41,19 @@ void SerialCom::clearData() {
 void SerialCom::sendData(uint32_t __t) {
         if (millis() - sendTime >= __t) {
                 sendTime = millis();
-                USING_SERIAL.println(dataSend);
+                COM_SERIAL.println(dataSend);
         }
 }
 
 void SerialCom::receive(void (*onReceive)(String)) {
         if (onReceive == nullptr) return;
-        if (USING_SERIAL.available()) {
+        if (COM_SERIAL.available()) {
                 char rxBuffer[250];
                 uint8_t rxBufferPtr = 0;
-                rxBuffer[rxBufferPtr++] = USING_SERIAL.read();
+                rxBuffer[rxBufferPtr++] = COM_SERIAL.read();
                 while (1) {
-                        if (USING_SERIAL.available()) {
-                                rxBuffer[rxBufferPtr++] = USING_SERIAL.read();
+                        if (COM_SERIAL.available()) {
+                                rxBuffer[rxBufferPtr++] = COM_SERIAL.read();
                                 if (rxBuffer[rxBufferPtr - 1] == '\n') break;
                         }
                 }

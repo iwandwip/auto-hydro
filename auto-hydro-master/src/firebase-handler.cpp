@@ -59,6 +59,19 @@ bool FirebaseModule::isConnect() {
 
 bool FirebaseModule::update(void (*onUpdate)(void)) {
         onUpdate();
+        return true;
+}
+
+void FirebaseModule::clearData() {
+        free(data);
+        dataLen = 0;
+        data = nullptr;
+        for (int i = 0; i < addrLen; i++) {
+                free(address[i]);
+        }
+        free(address);
+        address = NULL;
+        addrLen = 0;
 }
 
 void FirebaseModule::addData(float newData, const char* newAddressData) {
@@ -76,49 +89,52 @@ void FirebaseModule::addData(float newData, const char* newAddressData) {
 }
 
 void FirebaseModule::sendData(uint32_t __time) {
-        if (data == nullptr) return;
-        if (Firebase.ready() && millis() - sendTime >= __time) {
-                for (uint8_t i = 0; i < dataLen; i++) {
-                        Firebase.RTDB.setFloatAsync(fbdo, address[i], data[i]) ? 1 : 0;
+        try {
+                if (data == nullptr) return;
+                if (Firebase.ready() && millis() - sendTime >= __time) {
+                        for (uint8_t i = 0; i < dataLen; i++) {
+                                Firebase.RTDB.setFloatAsync(fbdo, address[i], data[i]) ? 1 : 0;
+                        }
+                        sendTime = millis();
                 }
-                sendTime = millis();
+        } catch (...) {
         }
-}
-
-void FirebaseModule::clearData() {
-        free(data);
-        dataLen = 0;
-        data = nullptr;
-        for (int i = 0; i < addrLen; i++) {
-                free(address[i]);
-        }
-        free(address);
-        address = NULL;
-        addrLen = 0;
 }
 
 void FirebaseModule::setFloat(float floatData, const char* addrs) {
-        if (Firebase.ready()) {
-                Firebase.RTDB.setFloatAsync(fbdo, addrs, floatData) ? 1 : 0;
+        try {
+                if (Firebase.ready()) {
+                        Firebase.RTDB.setFloatAsync(fbdo, addrs, floatData) ? 1 : 0;
+                }
+        } catch (...) {
         }
 }
 
 void FirebaseModule::setString(String strData, const char* addrs) {
-        if (Firebase.ready()) {
-                Firebase.RTDB.setStringAsync(fbdo, addrs, strData) ? 1 : 0;
+        try {
+                if (Firebase.ready()) {
+                        Firebase.RTDB.setStringAsync(fbdo, addrs, strData) ? 1 : 0;
+                }
+        } catch (...) {
         }
 }
 
 float FirebaseModule::getData(const char* getAddress) {
-        if (Firebase.ready() && Firebase.RTDB.getFloat(fbdo, F(getAddress))) {
-                return fbdo->to<float>();
+        try {
+                if (Firebase.ready() && Firebase.RTDB.getFloat(fbdo, F(getAddress))) {
+                        return fbdo->to<float>();
+                }
+        } catch (...) {
         }
         return 0.0;
 }
 
 String FirebaseModule::getStrData(const char* getAddress) {
-        if (Firebase.ready() && Firebase.RTDB.getString(fbdo, F(getAddress))) {
-                return fbdo->to<String>();
+        try {
+                if (Firebase.ready() && Firebase.RTDB.getString(fbdo, F(getAddress))) {
+                        return fbdo->to<String>();
+                }
+        } catch (...) {
         }
         return "";
 }

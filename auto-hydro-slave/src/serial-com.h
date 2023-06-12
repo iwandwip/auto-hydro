@@ -23,11 +23,12 @@ class SerialCom {
 
        public:
         SerialCom();
+        void begin(long baudrate = 9600);
         void addData(const char* newData, const char* separator = ";");
         void addData(float newData, const char* separator = ";");
         void addData(int newData, const char* separator = ";");
         void clearData();
-        void sendData(uint32_t __t = 500);
+        void sendData(uint32_t __t = 500, bool debug = false);
         void receive(void (*onReceive)(String) = nullptr);
         float getData(String data, uint8_t index = 0);
         String getStrData(String data, uint8_t index = 0);

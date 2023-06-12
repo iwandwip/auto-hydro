@@ -9,14 +9,16 @@
 
 #include "SoftwareSerial.h"
 
-#define USING_SERIAL espSerial
+#define COM_SERIAL espSerial
 
-SoftwareSerial USING_SERIAL(2, 3);
+SoftwareSerial COM_SERIAL(3, 2);
 
 SerialCom::SerialCom() {
-        dataSend = "";
-        USING_SERIAL.begin(9600);
-        USING_SERIAL.println();
+}
+
+void SerialCom::begin(long baudrate) {
+        COM_SERIAL.begin(115200);
+        COM_SERIAL.println();
 }
 
 void SerialCom::addData(const char* newData, const char* separator) {
@@ -38,23 +40,29 @@ void SerialCom::clearData() {
         dataSend = "";
 }
 
-void SerialCom::sendData(uint32_t __t) {
+void SerialCom::sendData(uint32_t __t, bool debug) {
         if (millis() - sendTime >= __t) {
                 sendTime = millis();
-                USING_SERIAL.println(dataSend);
-                Serial.println(dataSend);
+                COM_SERIAL.println(dataSend);
+                if (debug) Serial.println(dataSend);
         }
 }
 
 void SerialCom::receive(void (*onReceive)(String)) {
         if (onReceive == nullptr) return;
-        if (USING_SERIAL.available()) {
+        // Serial.println("Unit test ->");
+        // if (COM_SERIAL.available()) {
+        //         Serial.println(" Success");
+        // } else {
+        //         Serial.println(" Failed");
+        // }
+        if (COM_SERIAL.available()) {
                 char rxBuffer[250];
                 uint8_t rxBufferPtr = 0;
-                rxBuffer[rxBufferPtr++] = USING_SERIAL.read();
+                rxBuffer[rxBufferPtr++] = COM_SERIAL.read();
                 while (1) {
-                        if (USING_SERIAL.available()) {
-                                rxBuffer[rxBufferPtr++] = USING_SERIAL.read();
+                        if (COM_SERIAL.available()) {
+                                rxBuffer[rxBufferPtr++] = COM_SERIAL.read();
                                 if (rxBuffer[rxBufferPtr - 1] == '\n') break;
                         }
                 }

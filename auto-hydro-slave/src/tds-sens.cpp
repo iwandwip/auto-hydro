@@ -13,10 +13,12 @@
 #define SENSOR_FILTER_KF 8
 
 TDS::TDS()
-    : sensorPin(A0) {
+  : sensorPin(A0) {
         isCalibrate = false;
         tdsValue = (isCalibrate) ? new float[SENS_RET_TOTAL_DATA] : new float;
         if (isCalibrate) cal_tm = new uint32_t;
+        buffIndex = 0;
+        temperature = 25;
 }
 
 TDS::TDS(uint8_t __pin, bool enableCalibrate) {
@@ -24,6 +26,8 @@ TDS::TDS(uint8_t __pin, bool enableCalibrate) {
         isCalibrate = enableCalibrate;
         tdsValue = (isCalibrate) ? new float[SENS_RET_TOTAL_DATA] : new float;
         if (isCalibrate) cal_tm = new uint32_t;
+        buffIndex = 0;
+        temperature = 25;
 }
 
 TDS::~TDS() {
@@ -34,7 +38,7 @@ void TDS::init() {
 }
 
 void TDS::update() {
-        if (millis() - sample_tm >= 40) {
+        if (millis() - sample_tm >= 40U) {
                 buff[buffIndex] = analogRead(sensorPin);
                 buffIndex++;
                 if (buffIndex == 30) buffIndex = 0;
@@ -52,6 +56,8 @@ void TDS::update() {
 
                         *tdsValue = *tdsValue + (*tdsValue * SENSOR_FILTER_KF);
                         *tdsValue /= SENSOR_FILTER_KF + 1;
+
+                        // *tdsValue = (*tdsValue > 10000) ? 10000 : (*tdsValue < 0) ? 0: *tdsValue;
                 } else {
                         SimpleKalmanFilter* sonarKf = new SimpleKalmanFilter(2, 2, 0.01);
                         tdsValue[SENS_RET_RAW_DATA] = analogRead(sensorPin);

@@ -8,7 +8,6 @@
 #include "ph-sens.h"
 
 #include "Arduino.h"
-#include "SimpleKalmanFilter.h"
 
 #define SENSOR_FILTER_KF 8
 
@@ -17,6 +16,7 @@ PHsens::PHsens()
         isCalibrate = false;
         phValue = (isCalibrate) ? new float[SENS_RET_TOTAL_DATA] : new float;
         if (isCalibrate) cal_tm = new uint32_t;
+        phFilter = new SimpleKalmanFilter(2, 2, 0.01);
 }
 
 PHsens::PHsens(uint8_t __pin, bool enableCalibrate) {
@@ -24,6 +24,7 @@ PHsens::PHsens(uint8_t __pin, bool enableCalibrate) {
         isCalibrate = enableCalibrate;
         phValue = (isCalibrate) ? new float[SENS_RET_TOTAL_DATA] : new float;
         if (isCalibrate) cal_tm = new uint32_t;
+        phFilter = new SimpleKalmanFilter(2, 2, 0.01);
 }
 
 PHsens::~PHsens() {
@@ -53,6 +54,9 @@ void PHsens::update() {
                 if (!isCalibrate) {
                         *phValue = (float)average * 5.0 / 1024.0 / 6.0;
                         *phValue = *phValue * 3.5;
+
+                        *phValue = phFilter->updateEstimate(*phValue);
+
                         *phValue = *phValue + (*phValue * SENSOR_FILTER_KF);
                         *phValue /= SENSOR_FILTER_KF + 1;
                 } else {

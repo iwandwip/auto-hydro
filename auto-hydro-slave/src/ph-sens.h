@@ -13,9 +13,11 @@
 #include "Arduino.h"
 #include "sensor-module.h"
 #include "stdint.h"
+#include "SimpleKalmanFilter.h"
 
 class PHsens : public BaseSens {
-       private:
+      private:
+        SimpleKalmanFilter* phFilter;
         uint8_t sensorPin;
         int buff[10], temp;
         uint16_t average;
@@ -30,7 +32,7 @@ class PHsens : public BaseSens {
         float getSensorAverage(float sensorValue, int numReadings = 10);
         float lowPassFilter(float input, float output, float alpha);
 
-       public:
+      public:
         PHsens();
         PHsens(uint8_t __pin, bool enableCalibrate = false);
         ~PHsens();
