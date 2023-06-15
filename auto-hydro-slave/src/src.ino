@@ -40,19 +40,19 @@ void setup() {
 void loop() {
         sensor.update(sensorRoutine);
 
-        Serial.print("| sonar[0]: ");
-        Serial.print(value[0]);
-        Serial.print("| sonar[1]: ");
-        Serial.print(value[1]);
-        Serial.print("| sonar[2]: ");
-        Serial.print(value[2]);
-        Serial.print("| sonar[3]: ");
-        Serial.print(value[3]);
-        Serial.print("| pH: ");
-        Serial.print(value[4]);
-        Serial.print("| tds: ");
-        Serial.print(value[5]);
-        Serial.println();
+        // Serial.print("| sonar[0]: ");
+        // Serial.print(value[0]);
+        // Serial.print("| sonar[1]: ");
+        // Serial.print(value[1]);
+        // Serial.print("| sonar[2]: ");
+        // Serial.print(value[2]);
+        // Serial.print("| sonar[3]: ");
+        // Serial.print(value[3]);
+        // Serial.print("| pH: ");
+        // Serial.print(value[4]);
+        // Serial.print("| tds: ");
+        // Serial.print(value[5]);
+        // Serial.println();
 
         com.clearData();
         for (uint8_t i = 0; i < 6; i++) {
@@ -84,13 +84,13 @@ void onReceive(String data) {
         phValue = com.getData(data, 1);
         tdsValue = com.getData(data, 2);
 
-        // Serial.print("| waterValue: ");
-        // Serial.print(waterValue);
-        // Serial.print("| phValue: ");
-        // Serial.print(phValue);
-        // Serial.print("| tdsValue: ");
-        // Serial.print(tdsValue);
-        // Serial.print("| data: ");
-        // Serial.print(data);
+        Serial.print("| waterValue: ");
+        Serial.print(waterValue);
+        Serial.print("| phValue: ");
+        Serial.print(phValue);
+        Serial.print("| tdsValue: ");
+        Serial.print(tdsValue);
+        Serial.print("| data: ");
+        Serial.print(data);
         // Serial.println();
 }

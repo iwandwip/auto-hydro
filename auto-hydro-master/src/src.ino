@@ -45,11 +45,11 @@ void serverHandler(void* pvParameter) {
                         firebase.addData(value[5], "/sens/tds-sens");
                         firebase.sendData(4000);
 
-                        dataIn[0] = firebase.getData("/now-plants/water");
-                        dataIn[1] = firebase.getData("/now-plants/ph");
-                        dataIn[2] = firebase.getData("/now-plants/tds");
+                        dataIn[0] = firebase.getStrData("/now-plants/water").toFloat();
+                        dataIn[1] = firebase.getStrData("/now-plants/ph").toFloat();
+                        dataIn[2] = firebase.getStrData("/now-plants/tds").toFloat();
 
-                        Serial.print("Fb In Data ");
+                        Serial.print("Firebase Data ");
                         Serial.print("| ");
                         Serial.print(dataIn[0]);
                         Serial.print("| ");
