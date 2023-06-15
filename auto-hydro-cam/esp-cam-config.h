@@ -3,6 +3,7 @@
 #ifndef ESP_CAM_CONFIG_H
 #define ESP_CAM_CONFIG_H
 
+#define ESPCAM_FLASH_PIN 4
 #define PWDN_GPIO_NUM 32
 #define RESET_GPIO_NUM -1
 #define XCLK_GPIO_NUM 0

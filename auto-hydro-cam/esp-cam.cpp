@@ -7,7 +7,8 @@
 
 #include "esp-cam.h"
 
-EspCamera::EspCamera() {
+EspCamera::EspCamera()
+  : isSPIFFS(false), isCheck(false), isDoneCapturing(false), isUsingFlash(false) {
 }
 
 EspCamera::~EspCamera() {
@@ -23,7 +24,11 @@ void EspCamera::initSPIFFS() {
         }
 }
 
-void EspCamera::init() {
+void EspCamera::init(bool _isUsingFlash) {
+        isUsingFlash = _isUsingFlash;
+        if (isUsingFlash) {
+                pinMode(ESPCAM_FLASH_PIN, OUTPUT);
+        }
         // OV2640 camera module
         camera_config_t config;
         config.ledc_channel = LEDC_CHANNEL_0;
@@ -67,6 +72,10 @@ void EspCamera::init() {
 void EspCamera::capture(uint32_t _time) {
         if (millis() - captureTime >= _time) {
                 captureTime = millis();
+                if (isUsingFlash) {
+                        digitalWrite(ESPCAM_FLASH_PIN, HIGH);
+                }
+                isDoneCapturing = false;
                 camera_fb_t *fb = NULL;
                 bool ok = 0;
                 do {
@@ -92,6 +101,10 @@ void EspCamera::capture(uint32_t _time) {
                         esp_camera_fb_return(fb);
                         ok = check(SPIFFS);
                 } while (!ok);
+                if (isUsingFlash) {
+                        digitalWrite(ESPCAM_FLASH_PIN, LOW);
+                }
+                isDoneCapturing = true;
         }
 }
 
@@ -99,6 +112,10 @@ bool EspCamera::check(fs::FS &fs) {
         File f_pic = fs.open(STORAGE_PATH);
         unsigned int pic_sz = f_pic.size();
         return (pic_sz > 100);
+}
+
+bool EspCamera::doneCapturing() {
+        return isDoneCapturing;
 }
 
 void EspCamera::setPath(String _path) {

@@ -24,17 +24,22 @@
 
 class EspCamera {
       private:
-        bool isSPIFFS;
-        bool isCheck;
         uint32_t captureTime;
         String imgStorePath;
+
+        bool isSPIFFS;
+        bool isCheck;
+        bool isDoneCapturing;
+        bool isUsingFlash;
       public:
         EspCamera();
         ~EspCamera();
         void initSPIFFS();
-        void init();
+        void init(bool _isUsingFlash = true);
         void capture(uint32_t _time = 5000);
         bool check(fs::FS &fs);
+        bool doneCapturing();
+
         void setPath(String _path);
         String getPath();
 
