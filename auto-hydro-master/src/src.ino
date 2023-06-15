@@ -4,6 +4,19 @@
 #include "output-module.h"
 #include "serial-com.h"
 
+// sensor index
+#define SONAR_A 0
+#define SONAR_B 1
+#define SONAR_C 2
+#define SONAR_D 3
+#define PH_VALUE 4
+#define TDS_VALUE 5
+
+// ext value index
+#define WATER_THRESHOLD 0
+#define PH_THRESHOLD 1
+#define TDS_THRESHOLD 2
+
 void onReceive(String data);
 
 FirebaseModule firebase;
@@ -18,9 +31,9 @@ void setup() {
         firebase.waitConnection(1000);
         firebase.init();
 
-        dataIn[0] = 0.0;
-        dataIn[1] = 0.0;
-        dataIn[2] = 0.0;
+        dataIn[WATER_THRESHOLD] = 0.0;
+        dataIn[PH_THRESHOLD] = 0.0;
+        dataIn[TDS_THRESHOLD] = 0.0;
 }
 
 void loop() {
@@ -45,18 +58,14 @@ void serverHandler(void* pvParameter) {
                         firebase.addData(value[5], "/sens/tds-sens");
                         firebase.sendData(4000);
 
-                        dataIn[0] = firebase.getStrData("/now-plants/water").toFloat();
-                        dataIn[1] = firebase.getStrData("/now-plants/ph").toFloat();
-                        dataIn[2] = firebase.getStrData("/now-plants/tds").toFloat();
+                        float buffer[3];
+                        buffer[0] = firebase.getStrData("/now-plants/water").toFloat();
+                        buffer[1] = firebase.getStrData("/now-plants/ph").toFloat();
+                        buffer[2] = firebase.getStrData("/now-plants/tds").toFloat();
 
-                        Serial.print("Firebase Data ");
-                        Serial.print("| ");
-                        Serial.print(dataIn[0]);
-                        Serial.print("| ");
-                        Serial.print(dataIn[1]);
-                        Serial.print("| ");
-                        Serial.print(dataIn[2]);
-                        Serial.println();
+                        for (uint8_t i = 0; i < 3; i++) {
+                                if (buffer[i] != 0) dataIn[i] = buffer[i];
+                        }
                 }
                 vTaskDelay(20 / portTICK_PERIOD_MS);
         }
@@ -69,5 +78,12 @@ void onReceive(String data) {
                 Serial.print("| ");
                 Serial.print(value[i]);
         }
+        Serial.print("| Firebase Data ");
+        Serial.print("| ");
+        Serial.print(dataIn[0]);
+        Serial.print("| ");
+        Serial.print(dataIn[1]);
+        Serial.print("| ");
+        Serial.print(dataIn[2]);
         Serial.println();
 }
