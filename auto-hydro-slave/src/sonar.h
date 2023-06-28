@@ -18,8 +18,8 @@
 class Sonar : public BaseSens {
        private:
         NewPing* sonar;
-        uint8_t echoPin;
-        uint8_t triggPin;
+        int echoPin;
+        int triggPin;
         float* distance;
         uint32_t update_tm;
         uint32_t debug_tm;
@@ -31,7 +31,7 @@ class Sonar : public BaseSens {
 
        public:
         Sonar(bool enableCalibrate = false);
-        Sonar(uint8_t echo, uint8_t trigg, bool enableCalibrate = false);
+        Sonar(int echo, int trigg, bool enableCalibrate = false);
         ~Sonar();
 
         void init() override;

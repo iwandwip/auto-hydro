@@ -11,14 +11,13 @@
 
 #define SONAR_FILTER_KF 8
 
-Sonar::Sonar(bool enableCalibrate)
-    : echoPin(2), triggPin(3) {
+Sonar::Sonar(bool enableCalibrate) {
         isCalibrate = enableCalibrate;
         distance = (enableCalibrate) ? new float[SENS_RET_TOTAL_DATA] : new float;
         if (enableCalibrate) cal_tm = new uint32_t;
 }
 
-Sonar::Sonar(uint8_t echo, uint8_t trigg, bool enableCalibrate) {
+Sonar::Sonar(int echo, int trigg, bool enableCalibrate) {
         echoPin = echo;
         triggPin = trigg;
         isCalibrate = enableCalibrate;
@@ -35,7 +34,7 @@ void Sonar::init() {
 }
 
 void Sonar::update() {
-        if (millis() - update_tm >= 500) {
+        if (millis() - update_tm >= 50) {
                 if (!isCalibrate) {
                         *distance = sonar->ping_cm();
                         *distance = *distance + (*distance * SONAR_FILTER_KF);

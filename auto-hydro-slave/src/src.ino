@@ -37,8 +37,8 @@ DigitalOut buzzer(12);
 
 DigitalOut pumpNutritionA(A5, true);
 DigitalOut pumpNutritionB(A4, true);
-DigitalOut pumpBasePH(A3, true);
-DigitalOut pumpCirculation(A2, true);
+DigitalOut pumpUpPH(A3, true);
+DigitalOut pumpDownPH(A2, true);
 
 SerialCom com;
 
@@ -56,6 +56,7 @@ void setup() {
 
 void loop() {
         sensor.update(sensorRoutine);
+        debug();
 
         com.clearData();
         for (uint8_t i = 0; i < 6; i++) {
@@ -65,9 +66,11 @@ void loop() {
         com.receive(onReceive);
 
         if (value[PH_VALUE] > extValue[PH_THRESHOLD] + PH_THRESHOLD_OFFSET) {
-                pumpBasePH.off();
+                pumpUpPH.off();
+                pumpDownPH.on();
         } else if (value[PH_VALUE] < extValue[PH_THRESHOLD] - PH_THRESHOLD_OFFSET) {
-                pumpBasePH.on();
+                pumpUpPH.on();
+                pumpDownPH.off();
         }
 
         if (value[TDS_VALUE] > extValue[TDS_THRESHOLD] + TDS_THRESHOLD_OFFSET) {
@@ -83,6 +86,8 @@ void sensorRoutine() {
         for (uint8_t i = 0; i < 6; i++) {
                 sensor.getModule(i)->getSensorValue(&value[i]);
         }
+        // value[PH_VALUE] = 2.0;
+        // value[TDS_VALUE] = 400.0;
 }
 
 void onReceive(String data) {
@@ -95,24 +100,24 @@ void onReceive(String data) {
 }
 
 void debug() {
-        // Serial.print("| sonar[0]: ");
-        // Serial.print(value[0]);
-        // Serial.print("| sonar[1]: ");
-        // Serial.print(value[1]);
-        // Serial.print("| sonar[2]: ");
-        // Serial.print(value[2]);
-        // Serial.print("| sonar[3]: ");
-        // Serial.print(value[3]);
+        Serial.print("| sonar[0]: ");
+        Serial.print(value[0]);
+        Serial.print("| sonar[1]: ");
+        Serial.print(value[1]);
+        Serial.print("| sonar[2]: ");
+        Serial.print(value[2]);
+        Serial.print("| sonar[3]: ");
+        Serial.print(value[3]);
         Serial.print("| pH: ");
         Serial.print(value[4]);
         Serial.print("| tds: ");
         Serial.print(value[5]);
 
-        Serial.print("| waterThresh: ");
-        Serial.print(extValue[WATER_THRESHOLD]);
-        Serial.print("| phThresh: ");
-        Serial.print(extValue[PH_THRESHOLD]);
-        Serial.print("| tdsThresh: ");
-        Serial.print(extValue[TDS_THRESHOLD]);
+        // Serial.print("| waterThresh: ");
+        // Serial.print(extValue[WATER_THRESHOLD]);
+        // Serial.print("| phThresh: ");
+        // Serial.print(extValue[PH_THRESHOLD]);
+        // Serial.print("| tdsThresh: ");
+        // Serial.print(extValue[TDS_THRESHOLD]);
         Serial.println();
 }
