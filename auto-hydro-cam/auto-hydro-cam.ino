@@ -6,7 +6,7 @@ EspCamera espcam;
 
 void setup() {
         Serial.begin(115200);
-        firebase.connectToWiFi("KASTARA INDONESIAA", "KASTARA@2022");
+        firebase.connectToWiFi("KASTARA GROUP INDONESIA", "KASTARA@2022");
         firebase.waitConnection(1000);
         firebase.init();
 

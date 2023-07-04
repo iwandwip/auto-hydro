@@ -71,6 +71,9 @@ void loop() {
         } else if (value[PH_VALUE] < extValue[PH_THRESHOLD] - PH_THRESHOLD_OFFSET) {
                 pumpUpPH.on();
                 pumpDownPH.off();
+        } else {
+                pumpUpPH.off();
+                pumpDownPH.off();
         }
 
         if (value[TDS_VALUE] > extValue[TDS_THRESHOLD] + TDS_THRESHOLD_OFFSET) {
@@ -86,8 +89,8 @@ void sensorRoutine() {
         for (uint8_t i = 0; i < 6; i++) {
                 sensor.getModule(i)->getSensorValue(&value[i]);
         }
-        // value[PH_VALUE] = 2.0;
-        // value[TDS_VALUE] = 400.0;
+        // value[PH_VALUE] = 5.75;
+        // value[TDS_VALUE] = 1200.0;
 }
 
 void onReceive(String data) {
@@ -96,7 +99,6 @@ void onReceive(String data) {
                 buffer[i] = com.getData(data, i);
                 if (buffer[i] != 0) extValue[i] = buffer[i];
         }
-        debug();
 }
 
 void debug() {
@@ -115,9 +117,9 @@ void debug() {
 
         // Serial.print("| waterThresh: ");
         // Serial.print(extValue[WATER_THRESHOLD]);
-        // Serial.print("| phThresh: ");
-        // Serial.print(extValue[PH_THRESHOLD]);
-        // Serial.print("| tdsThresh: ");
-        // Serial.print(extValue[TDS_THRESHOLD]);
+        Serial.print("| phThresh: ");
+        Serial.print(extValue[PH_THRESHOLD]);
+        Serial.print("| tdsThresh: ");
+        Serial.print(extValue[TDS_THRESHOLD]);
         Serial.println();
 }

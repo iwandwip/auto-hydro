@@ -23,7 +23,7 @@ FirebaseModule firebase;
 SerialCom com;
 
 float value[6];
-float dataIn[3];
+float dataIn[6];
 
 void setup() {
         Serial.begin(115200);
@@ -38,7 +38,7 @@ void setup() {
 
 void loop() {
         com.clearData();
-        for (uint8_t i = 0; i < 3; i++) {
+        for (uint8_t i = 0; i < 6; i++) {
                 com.addData(dataIn[i]);
         }
         com.sendData();
@@ -58,12 +58,16 @@ void serverHandler(void* pvParameter) {
                         firebase.addData(value[5], "/sens/tds-sens");
                         firebase.sendData(4000);
 
-                        float buffer[3];
+                        float buffer[6];
                         buffer[0] = firebase.getStrData("/now-plants/water").toFloat();
                         buffer[1] = firebase.getStrData("/now-plants/ph").toFloat();
                         buffer[2] = firebase.getStrData("/now-plants/tds").toFloat();
+                        
+                        buffer[3] = firebase.getStrData("/now-plants/button-1").toFloat();
+                        buffer[4] = firebase.getStrData("/now-plants/button-2").toFloat();
+                        buffer[5] = firebase.getStrData("/now-plants/button-3").toFloat();
 
-                        for (uint8_t i = 0; i < 3; i++) {
+                        for (uint8_t i = 0; i < 6; i++) {
                                 if (buffer[i] != 0) dataIn[i] = buffer[i];
                         }
                 }
