@@ -18,7 +18,7 @@ TDS::TDS()
         tdsValue = (isCalibrate) ? new float[SENS_RET_TOTAL_DATA] : new float;
         if (isCalibrate) cal_tm = new uint32_t;
         buffIndex = 0;
-        temperature = 25;
+        temperature = 23.4;
 }
 
 TDS::TDS(uint8_t __pin, bool enableCalibrate) {
@@ -54,6 +54,8 @@ void TDS::update() {
                         float volt = averageVolt / coeff;
                         *tdsValue = (133.42 * volt * volt * volt - 255.86 * volt * volt + 857.39 * volt) * 0.5;
 
+                        // *tdsValue = map(analogRead(sensorPin), 0, 1024, 0, 3500);
+                        *tdsValue = analogRead(sensorPin);
                         *tdsValue = *tdsValue + (*tdsValue * SENSOR_FILTER_KF);
                         *tdsValue /= SENSOR_FILTER_KF + 1;
 

@@ -12,7 +12,7 @@
 #define SENSOR_FILTER_KF 8
 
 PHsens::PHsens()
-    : sensorPin(A0) {
+  : sensorPin(A0) {
         isCalibrate = false;
         phValue = (isCalibrate) ? new float[SENS_RET_TOTAL_DATA] : new float;
         if (isCalibrate) cal_tm = new uint32_t;
@@ -53,9 +53,9 @@ void PHsens::update() {
                         average += buff[i];
                 if (!isCalibrate) {
                         *phValue = (float)average * 5.0 / 1024.0 / 6.0;
-                        *phValue = *phValue * 3.5;
-
-                        *phValue = phFilter->updateEstimate(*phValue);
+                        *phValue = -5.70 * *phValue + 28.0 - 0.7;
+                        *phValue = regressPh(*phValue);
+                        // *phValue = phFilter->updateEstimate(*phValue);
 
                         *phValue = *phValue + (*phValue * SENSOR_FILTER_KF);
                         *phValue /= SENSOR_FILTER_KF + 1;
@@ -135,4 +135,20 @@ float PHsens::getSensorAverage(float sensorValue, int numReadings) {
 float PHsens::lowPassFilter(float input, float output, float alpha) {
         output = (alpha * input) + ((1.0 - alpha) * output);
         return output;
+}
+
+double PHsens::regressPh(double x) {
+        double terms[] = {
+                1.1915131914333834e+000,
+                6.2490838951010319e-001,
+                3.6799000666406603e-003,
+                1.1898949593098573e-004
+        };
+        double t = 1;
+        double r = 0;
+        for (double c : terms) {
+                r += c * t;
+                t *= x;
+        }
+        return r;
 }

@@ -65,24 +65,24 @@ void loop() {
         com.sendData(500);
         com.receive(onReceive);
 
-        if (value[PH_VALUE] > extValue[PH_THRESHOLD] + PH_THRESHOLD_OFFSET) {
-                pumpUpPH.off();
-                pumpDownPH.on();
-        } else if (value[PH_VALUE] < extValue[PH_THRESHOLD] - PH_THRESHOLD_OFFSET) {
-                pumpUpPH.on();
-                pumpDownPH.off();
-        } else {
-                pumpUpPH.off();
-                pumpDownPH.off();
-        }
+        // if (value[PH_VALUE] > extValue[PH_THRESHOLD] + PH_THRESHOLD_OFFSET) {
+        //         pumpUpPH.off();
+        //         pumpDownPH.on();
+        // } else if (value[PH_VALUE] < extValue[PH_THRESHOLD] - PH_THRESHOLD_OFFSET) {
+        //         pumpUpPH.on();
+        //         pumpDownPH.off();
+        // } else {
+        //         pumpUpPH.off();
+        //         pumpDownPH.off();
+        // }
 
-        if (value[TDS_VALUE] > extValue[TDS_THRESHOLD] + TDS_THRESHOLD_OFFSET) {
-                pumpNutritionA.off();
-                pumpNutritionB.off();
-        } else if (value[TDS_VALUE] < extValue[TDS_THRESHOLD] - TDS_THRESHOLD_OFFSET) {
-                pumpNutritionA.on();
-                pumpNutritionB.on();
-        }
+        // if (value[TDS_VALUE] > extValue[TDS_THRESHOLD] + TDS_THRESHOLD_OFFSET) {
+        //         pumpNutritionA.off();
+        //         pumpNutritionB.off();
+        // } else if (value[TDS_VALUE] < extValue[TDS_THRESHOLD] - TDS_THRESHOLD_OFFSET) {
+        //         pumpNutritionA.on();
+        //         pumpNutritionB.on();
+        // }
 }
 
 void sensorRoutine() {

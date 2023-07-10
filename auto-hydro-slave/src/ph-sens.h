@@ -29,6 +29,7 @@ class PHsens : public BaseSens {
 
         bool isCalibrate;
 
+        double regressPh(double x);
         float getSensorAverage(float sensorValue, int numReadings = 10);
         float lowPassFilter(float input, float output, float alpha);
 
